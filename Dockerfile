@@ -13,14 +13,19 @@ RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/Allo
  
 # Copy app files
 COPY . /var/www/html/
+COPY docker-entrypoint.sh /usr/local/bin/lavalust-entrypoint
  
 # Fix permissions
 RUN chown -R www-data:www-data /var/www/html \
-&& chmod -R 755 /var/www/html
+&& chmod -R 755 /var/www/html \
+&& chmod 755 /usr/local/bin/lavalust-entrypoint
  
 # Point Apache document root to public/
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
  
 RUN sed -i "s|DocumentRoot /var/www/html|DocumentRoot ${APACHE_DOCUMENT_ROOT}|g" /etc/apache2/sites-available/000-default.conf
  
+ENTRYPOINT ["lavalust-entrypoint"]
+CMD ["apache2-foreground"]
+
 EXPOSE 80
