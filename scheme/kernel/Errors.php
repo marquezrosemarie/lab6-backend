@@ -139,6 +139,17 @@ class Errors
 		http_response_code(500);
 		
 		if (config_item('environment') !== 'development') {
+			$sql_state = $exception instanceof PDOException ? $exception->getCode() : 'unknown';
+			error_log(sprintf('LavaLust database error [%s]: %s', $sql_state, $message), 4);
+
+			$request_path = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: '';
+			if (strpos($request_path, '/api/') === 0 || strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false) {
+				header('Content-Type: application/json; charset=utf-8');
+				echo json_encode([
+					'error' => 'A database operation failed. Check the backend service logs.',
+					'status' => 500,
+				]);
+			}
 			exit();
 		}
 
