@@ -90,6 +90,9 @@ $config['date_default_timezone'] = 'Asia/Manila';
 */
 $config['base_url'] 				= '';
 
+$allowed_origins = getenv('API_ALLOWED_ORIGIN') ?: 'http://localhost:5173,http://127.0.0.1:5173';
+$config['allow_origin'] = array_values(array_filter(array_map('trim', explode(',', $allowed_origins))));
+
 /*
 |--------------------------------------------------------------------------
 | Static File Proxies
