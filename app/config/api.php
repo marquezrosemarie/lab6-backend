@@ -87,6 +87,9 @@ $config['jwt_secret'] = getenv('JWT_SECRET') ?: '';
 */
 $config['refresh_token_key'] = getenv('REFRESH_TOKEN_KEY') ?: '';
 
+$config['jwt_verify_user'] = TRUE;
+$config['users_table'] = 'users';
+
 /*
 |--------------------------------------------------------------------------
 | Access-Control-Allow-Origin

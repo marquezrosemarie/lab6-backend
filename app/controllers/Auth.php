@@ -93,6 +93,7 @@ class Auth extends Controller
 
     public function me()
     {
+        $this->db();
         $api = $this->api();
         $claims = $api->require_jwt();
         $user = $this->db()->raw(
@@ -109,11 +110,11 @@ class Auth extends Controller
 
     public function logout()
     {
+        $this->db();
         $api = $this->api();
         $api->require_jwt();
         $refreshToken = (string) ($this->body()['refresh_token'] ?? '');
         if ($refreshToken !== '') {
-            $this->db();
             $api->revoke_refresh_token($refreshToken);
         }
 

@@ -5,6 +5,7 @@ class Products extends Controller
 {
     private function api()
     {
+        $this->call->database();
         $api = $this->call->library('api');
         $api->require_jwt();
         return $api;

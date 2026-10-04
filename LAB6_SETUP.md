@@ -27,7 +27,7 @@ Requirements: PHP 8+, `pdo_mysql`, Node.js/npm, and MySQL. Composer is not requi
 
 1. Run `database/lab6.sql` against your Aiven MySQL service. It creates and selects a database named `lab6_db` before creating the tables. Set `DB_NAME=lab6_db`; if Aiven denies `CREATE DATABASE`, create `lab6_db` in the Aiven console first, then run the remaining SQL against it.
 2. Copy `.env.example` to `.env` and set `DB_DRIVER=mysql`, `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME`. Local MySQL can leave `DB_SSL_CA` empty.
-3. Set separate random values of at least 32 characters for `JWT_SECRET` and `REFRESH_TOKEN_KEY`. Generate each with `php -r "echo bin2hex(random_bytes(32)), PHP_EOL;"`.
+3. Copy `.env.example` to `.env`, then run `php lava jwt:generate` to write separate random `JWT_SECRET` and `REFRESH_TOKEN_KEY` values into `.env`. The command does not print the secrets. Copy each value into the Render Web Service environment settings manually; never commit `.env`.
 4. Start the API from this directory: `php -S 127.0.0.1:8000 -t public`.
 5. In `../frontend/` (sibling to the LavaLust backend), copy `.env.example` to `.env`, then run `npm install` and `npm run dev`.
 6. Open the Vite URL (normally `http://localhost:5173`), create an account, then add products.

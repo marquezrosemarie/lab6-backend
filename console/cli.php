@@ -63,6 +63,8 @@ register_command('route:list', 'handle_route_list', 'Display all registered rout
 
 register_command('key:generate', 'handle_key_generate', 'Generate a new application key', []);
 
+register_command('jwt:generate', 'handle_jwt_generate', 'Generate JWT and refresh-token secrets in .env', []);
+
 register_command('env:check', 'handle_env_check', 'Display current environment configuration summary', []);
 
 autoload_commands();
@@ -419,6 +421,42 @@ function handle_key_generate() {
     } else {
         echo "\033[0;33mNote: No .env file found. Copy the key above and set APP_KEY manually.\033[0m" . PHP_EOL;
     }
+}
+
+function handle_jwt_generate() {
+    $env_file = dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . '.env';
+    if (!file_exists($env_file)) {
+        echo danger('.env file not found. Copy .env.example to .env first.') . PHP_EOL;
+        exit(1);
+    }
+
+    $env = file_get_contents($env_file);
+    if ($env === false) {
+        echo danger('Could not read .env file.') . PHP_EOL;
+        exit(1);
+    }
+
+    $secrets = [
+        'JWT_SECRET' => bin2hex(random_bytes(32)),
+        'REFRESH_TOKEN_KEY' => bin2hex(random_bytes(32)),
+    ];
+
+    foreach ($secrets as $name => $value) {
+        $pattern = '/^' . preg_quote($name, '/') . '\\s*=.*$/m';
+        if (preg_match($pattern, $env)) {
+            $env = preg_replace($pattern, $name . '=' . $value, $env);
+        } else {
+            $env = rtrim($env) . PHP_EOL . $name . '=' . $value . PHP_EOL;
+        }
+    }
+
+    if (file_put_contents($env_file, $env, LOCK_EX) === false) {
+        echo danger('Could not write JWT secrets to .env.') . PHP_EOL;
+        exit(1);
+    }
+
+    echo success('JWT_SECRET and REFRESH_TOKEN_KEY generated in .env. Keep this file private.') . PHP_EOL;
+    echo 'Copy both values to your Render Web Service environment settings separately.' . PHP_EOL;
 }
 
 /**
