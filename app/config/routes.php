@@ -45,6 +45,7 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 /** @var object $router **/
 
 $router->get('/', 'Welcome::index');
+$router->get('/api', 'Welcome::index');
 
 $router->post('/api/auth/register', 'Auth::register');
 $router->post('/api/auth/login', 'Auth::login');
