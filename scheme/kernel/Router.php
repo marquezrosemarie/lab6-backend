@@ -464,6 +464,29 @@ class Router
                 return;
             }
         }
+
+        if (strpos($url, '/api/') === 0 || $url === '/api') {
+            $allowed_methods = [];
+            foreach ($this->routes as $route) {
+                if ($this->url_matches_route($url, $route)) {
+                    $allowed_methods[] = strtoupper($route['method']);
+                }
+            }
+
+            header('Content-Type: application/json; charset=utf-8');
+            if ($allowed_methods) {
+                $allowed_methods = array_values(array_unique($allowed_methods));
+                header('Allow: ' . implode(', ', $allowed_methods));
+                http_response_code(405);
+                echo json_encode(['error' => 'Method Not Allowed', 'status' => 405]);
+                exit;
+            }
+
+            http_response_code(404);
+            echo json_encode(['error' => 'API endpoint not found', 'status' => 404]);
+            exit;
+        }
+
         empty(config_item('404_override')) ? show_404() : show_404('', '', config_item('404_override'));
     }
 
